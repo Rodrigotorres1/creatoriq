@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorIQ — YouShop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green-dark: #085041;
+    --green-mid: #0F6E56;
+    --green-light: #1D9E75;
+    --green-pale: #E1F5EE;
+    --green-border: #9FE1CB;
+    --bg: #F7F9F8;
+    --surface: #FFFFFF;
+    --text: #1A1A1A;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --radius: 12px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+  header { background: var(--green-dark); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 18px; font-weight: 600; color: #fff; letter-spacing: -0.02em; }
+  .logo span { color: #5DCAA5; }
+  .logo-sub { font-size: 11px; color: #9FE1CB; font-weight: 400; margin-left: 8px; opacity: 0.8; }
+  .powered { font-size: 11px; color: #9FE1CB; opacity: 0.7; }
+  .layout { display: grid; grid-template-columns: 280px 1fr; flex: 1; height: calc(100vh - 56px); overflow: hidden; }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; padding: 1.25rem; }
+  .creator-card { background: var(--green-pale); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 1rem; margin-bottom: 1.25rem; }
+  .creator-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--green-mid); color: #fff; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; }
+  .creator-name { font-size: 14px; font-weight: 600; color: var(--green-dark); }
+  .creator-niche { font-size: 12px; color: var(--green-mid); margin-top: 2px; }
+  .section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.6rem; margin-top: 1rem; }
+  .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-key { color: var(--text-muted); }
+  .metric-val { font-weight: 600; font-family: 'DM Mono', monospace; font-size: 13px; }
+  .metric-val.good { color: var(--green-light); }
+  .metric-val.bad { color: #E24B4A; }
+  .metric-val.neutral { color: var(--text); }
+  .product-item { padding: 0.6rem 0.75rem; border-radius: 8px; background: var(--bg); margin-bottom: 0.4rem; font-size: 13px; }
+  .product-name { font-weight: 500; margin-bottom: 2px; }
+  .product-stats { color: var(--text-muted); font-size: 12px; display: flex; gap: 8px; }
+  .dot-good { color: var(--green-light); }
+  .dot-bad { color: #E24B4A; }
+  .chat-area { display: flex; flex-direction: column; overflow: hidden; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+  .msg-wrap { display: flex; flex-direction: column; max-width: 80%; }
+  .msg-wrap.user { align-self: flex-end; align-items: flex-end; }
+  .msg-wrap.ai { align-self: flex-start; align-items: flex-start; }
+  .msg-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+  .bubble { padding: 0.75rem 1rem; border-radius: 14px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+  .bubble.user { background: var(--green-dark); color: #fff; border-bottom-right-radius: 4px; }
+  .bubble.ai { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; }
+  .bubble.ai.loading { color: var(--text-muted); font-style: italic; }
+  .quick-actions { padding: 0 1.5rem 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .quick-btn { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--green-border); background: var(--green-pale); color: var(--green-dark); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: background 0.15s; }
+  .quick-btn:hover { background: #c8eee0; }
+  .chat-input-area { padding: 1rem 1.5rem; border-top: 1px solid var(--border); background: var(--surface); display: flex; gap: 0.75rem; align-items: flex-end; }
+  .chat-input { flex: 1; border: 1px solid var(--border); border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 14px; font-family: 'DM Sans', sans-serif; resize: none; outline: none; line-height: 1.5; max-height: 100px; min-height: 40px; background: var(--bg); color: var(--text); transition: border 0.15s; }
+  .chat-input:focus { border-color: var(--green-border); }
+  .send-btn { width: 40px; height: 40px; border-radius: 10px; background: var(--green-mid); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
+  .send-btn:hover { background: var(--green-dark); }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .send-btn svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .welcome { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; color: var(--text-muted); }
+  .welcome-icon { width: 56px; height: 56px; background: var(--green-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 24px; }
+  .welcome h2 { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+  .welcome p { font-size: 13px; line-height: 1.6; max-width: 320px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center">
+    <div class="logo">Creator<span>IQ</span></div>
+    <span class="logo-sub">by YouShop</span>
+  </div>
+  <div class="powered">Powered by IA Generativa</div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="creator-card">
+      <div class="creator-avatar">LC</div>
+      <div class="creator-name">Lucas Carvalho</div>
+      <div class="creator-niche">Nicho: Tecnologia & Carreira</div>
+    </div>
+    <div class="section-label">Performance — últimos 7 dias</div>
+    <div class="metric-row"><span class="metric-key">Cliques</span><span class="metric-val neutral">847</span></div>
+    <div class="metric-row"><span class="metric-key">Vendas</span><span class="metric-val bad">11</span></div>
+    <div class="metric-row"><span class="metric-key">Conversão</span><span class="metric-val bad">1,3%</span></div>
+    <div class="metric-row"><span class="metric-key">Média da plataforma</span><span class="metric-val good">3,8%</span></div>
+    <div class="metric-row"><span class="metric-key">Comissão gerada</span><span class="metric-val neutral">R$ 412</span></div>
+    <div class="metric-row"><span class="metric-key">Melhor horário</span><span class="metric-val good">19h–21h</span></div>
+    <div class="metric-row"><span class="metric-key">Horário dos posts</span><span class="metric-val bad">13h–15h</span></div>
+    <div class="section-label" style="margin-top:1.25rem">Produtos promovidos</div>
+    <div class="product-item">
+      <div class="product-name">Curso de Tráfego Pago</div>
+      <div class="product-stats"><span class="dot-good">● 4,2% conv.</span><span>Sem post há 5 dias</span></div>
+    </div>
+    <div class="product-item">
+      <div class="product-name">Mentoria de LinkedIn</div>
+      <div class="product-stats"><span class="dot-bad">● 0,8% conv.</span><span>8 posts esta semana</span></div>
+    </div>
+    <div class="product-item">
+      <div class="product-name">Pack de Templates Canva</div>
+      <div class="product-stats"><span class="dot-good">● 2,9% conv.</span><span>3 posts esta semana</span></div>
+    </div>
+  </aside>
+
+  <div class="chat-area">
+    <div class="chat-messages" id="chatMessages">
+      <div class="welcome" id="welcomeMsg">
+        <div class="welcome-icon">⚡</div>
+        <h2>Olá, Lucas! Pronto para analisar seus dados?</h2>
+        <p>Faça uma pergunta ou use os atalhos abaixo para entender sua performance e receber recomendações práticas.</p>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="sendQuick('Como estão meus resultados essa semana?')">Minha performance</button>
+      <button class="quick-btn" onclick="sendQuick('Qual produto devo focar agora?')">Melhor produto</button>
+      <button class="quick-btn" onclick="sendQuick('Qual o melhor horário para postar?')">Horário ideal</button>
+      <button class="quick-btn" onclick="sendQuick('Por que minha conversão está baixa?')">Por que baixa?</button>
+      <button class="quick-btn" onclick="sendQuick('Quanto posso ganhar se melhorar minha conversão para 3,8%?')">Potencial de ganho</button>
+    </div>
+
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chatInput" placeholder="Pergunte sobre sua performance..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const RESPOSTAS = {
+  "Como estão meus resultados essa semana?": "Lucas, você teve 847 cliques essa semana, o que é um bom volume. O problema está na conversão: apenas 11 vendas, resultando em 1,3% de taxa. A média dos creators na YouShop é 3,8%, ou seja, você está gerando menos de um terço do que poderia com o mesmo tráfego.\n\nA boa notícia é que o problema não é falta de audiência. É falta de estratégia nos produtos certos, nos horários certos. Isso é totalmente corrigível.",
+
+  "Qual produto devo focar agora?": "Sem dúvida: o Curso de Tráfego Pago. Ele tem a maior taxa de conversão da sua carteira, 4,2%, mas você não fez nenhum post nos últimos 5 dias. Está deixando dinheiro na mesa.\n\nA Mentoria de LinkedIn tem conversão de 0,8% e você fez 8 posts essa semana. Você está gastando energia no produto errado. Minha recomendação: reduza os posts de LinkedIn para no máximo 2 por semana e direcione esse esforço para o Curso de Tráfego Pago.",
+
+  "Qual o melhor horário para postar?": "Seus dados mostram um padrão claro: as 3 maiores conversões da semana aconteceram entre 19h e 21h. Mas seus últimos posts foram todos publicados entre 13h e 15h, exatamente o horário de menor engajamento do seu público.\n\nMudar o horário de publicação para a faixa das 19h é provavelmente a ação com maior impacto imediato nos seus resultados. Você não precisa criar mais conteúdo, só postar no momento certo.",
+
+  "Por que minha conversão está baixa?": "Três fatores explicam sua conversão de 1,3%:\n\n1. Produto errado em destaque: você está priorizando a Mentoria de LinkedIn (0,8% de conversão) quando o Curso de Tráfego Pago converte 4,2%.\n\n2. Horário fora do pico: seus posts vão ao ar entre 13h e 15h, mas sua audiência converte melhor entre 19h e 21h.\n\n3. Excesso de posts no produto fraco: 8 posts da Mentoria de LinkedIn em uma semana pode gerar fadiga na audiência e reduzir o engajamento geral.\n\nCorrigindo esses três pontos, você pode dobrar ou triplicar sua conversão sem precisar de mais tráfego.",
+
+  "Quanto posso ganhar se melhorar minha conversão para 3,8%?": "Vamos calcular com seus números reais:\n\nAtualmente: 847 cliques × 1,3% = 11 vendas × R$ 37 de comissão média = R$ 412 por semana.\n\nCom 3,8% de conversão: 847 cliques × 3,8% = 32 vendas × R$ 37 = R$ 1.184 por semana.\n\nIsso representa R$ 772 a mais por semana, ou cerca de R$ 3.088 a mais por mês, sem aumentar um único clique. Apenas otimizando produto e horário.\n\nEsse é o poder de tomar decisões baseadas em dados."
+};
+
+const RESPOSTA_PADRAO = "Entendi sua pergunta. Com base nos seus dados atuais, o ponto mais crítico é a diferença entre sua conversão (1,3%) e a média da plataforma (3,8%). Recomendo focar no Curso de Tráfego Pago no horário das 19h–21h como primeiro passo. Isso tem potencial de triplicar seus resultados sem precisar de mais tráfego.";
+
+let isLoading = false;
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function sendQuick(text) {
+  document.getElementById('chatInput').value = text;
+  sendMessage();
+}
+
+function addMessage(role, content, loading = false) {
+  const container = document.getElementById('chatMessages');
+  const welcome = document.getElementById('welcomeMsg');
+  if (welcome) welcome.remove();
+
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap ' + role;
+
+  const label = document.createElement('div');
+  label.className = 'msg-label';
+  label.textContent = role === 'user' ? 'Você' : 'CreatorIQ';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ' + role + (loading ? ' loading' : '');
+  bubble.textContent = content;
+
+  wrap.appendChild(label);
+  wrap.appendChild(bubble);
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+  return bubble;
+}
+
+function getResponse(text) {
+  const lower = text.toLowerCase();
+  if (lower.includes('ganhar') || lower.includes('ganho') || lower.includes('potencial') || lower.includes('dinheiro') || lower.includes('comiss') || lower.includes('quanto')) return RESPOSTAS["Quanto posso ganhar se melhorar minha conversão para 3,8%?"];
+  if (lower.includes('horário') || lower.includes('horario') || lower.includes('postar') || (lower.includes('melhor') && lower.includes('hora'))) return RESPOSTAS["Qual o melhor horário para postar?"];
+  if (lower.includes('por que') || lower.includes('porque') || lower.includes('baixa') || lower.includes('motivo')) return RESPOSTAS["Por que minha conversão está baixa?"];
+  if (lower.includes('produto') || lower.includes('focar') || lower.includes('promover') || lower.includes('foco')) return RESPOSTAS["Qual produto devo focar agora?"];
+  if (lower.includes('result') || lower.includes('semana') || lower.includes('performance') || lower.includes('como est')) return RESPOSTAS["Como estão meus resultados essa semana?"];
+  return RESPOSTA_PADRAO;
+}
+
+function sendMessage() {
+  if (isLoading) return;
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  addMessage('user', text);
+  const loadingBubble = addMessage('ai', 'Analisando seus dados...', true);
+
+  setTimeout(() => {
+    const reply = getResponse(text);
+    loadingBubble.className = 'bubble ai';
+    loadingBubble.textContent = reply;
+    document.getElementById('chatMessages').scrollTop = 9999;
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+  }, 900);
+}
+</script>
+</body>
+</html>
